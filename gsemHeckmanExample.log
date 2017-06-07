@@ -1,0 +1,394 @@
+---------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /work/A0943_vjh3_group/Estimation/gsemPractice/gsemHeckmanExample.log
+  log type:  text
+ opened on:  10 Jan 2014, 16:43:48
+
+. 
+. ***********************************************
+. * Do example 44g (Endogenous treatment-effects model)
+. * Unix PDF version
+. ***********************************************
+. use http://www.stata-press.com/data/r13/gsem_union3
+(NLSY 1972)
+
+. 
+. gsem (wage <- age grade i.smsa i.black tenure union L) (union <- i.black tenure i.south L@1, probit), var(L@1)
+
+Fitting fixed-effects model:
+
+Iteration 0:   log likelihood = -3062.5506  
+Iteration 1:   log likelihood = -3061.4973  
+Iteration 2:   log likelihood =  -3061.497  
+
+Refining starting values:
+
+Grid node 0:   log likelihood = -3080.2627
+
+Fitting full model:
+
+Iteration 0:   log likelihood = -3080.2627  
+Iteration 1:   log likelihood = -3077.4577  
+Iteration 2:   log likelihood = -3055.4741  (not concave)
+Iteration 3:   log likelihood = -3053.1242  
+Iteration 4:   log likelihood = -3061.0898  
+Iteration 5:   log likelihood = -3052.7247  
+Iteration 6:   log likelihood = -3051.5867  
+Iteration 7:   log likelihood =  -3051.575  
+Iteration 8:   log likelihood =  -3051.575  
+
+Generalized structural equation model             Number of obs   =       1210
+Log likelihood =  -3051.575
+
+ ( 1)  [union]L = 1
+ ( 2)  [var(L)]_cons = 1
+------------------------------------------------------------------------------
+             |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+wage <-      |
+         age |   .1487409   .0193291     7.70   0.000     .1108566    .1866252
+       grade |   .4205657   .0293575    14.33   0.000      .363026    .4781054
+      1.smsa |   .9117042    .124904     7.30   0.000     .6668969    1.156512
+     1.black |  -.7882479   .1367067    -5.77   0.000    -1.056188   -.5203076
+      tenure |   .1524012   .0369592     4.12   0.000     .0799626    .2248399
+       union |   2.945824   .2748902    10.72   0.000     2.407049    3.484598
+           L |   -1.64092   .2113693    -7.76   0.000    -2.055196   -1.226643
+       _cons |  -4.351571    .528395    -8.24   0.000    -5.387206   -3.315936
+-------------+----------------------------------------------------------------
+union <-     |
+             |
+     1.black |   .6445273   .1354873     4.76   0.000     .3789771    .9100775
+      tenure |   .1232537   .0328779     3.75   0.000     .0588143    .1876932
+     1.south |  -.8212928    .120365    -6.82   0.000    -1.057204   -.5853817
+           L |          1  (constrained)
+       _cons |  -1.252393   .1024588   -12.22   0.000    -1.453208   -1.051577
+-------------+----------------------------------------------------------------
+       var(L)|          1  (constrained)
+-------------+----------------------------------------------------------------
+  var(e.wage)|   1.384357   .5157697                      .6669851    2.873295
+------------------------------------------------------------------------------
+
+. 
+. 
+. 
+. ***********************************************
+. * Now, do example 43g (Heckman Selection model)
+. * Unix PDF version
+. ***********************************************
+. use http://www.stata-press.com/data/r13/gsem_womenwk, clear
+(Fictional data on women and work)
+
+. 
+. gen selected = ~mi(wage)
+
+. 
+. * Stata manual version
+. gsem (wage <- educ age L) (selected <- married children educ age L@1, probit), var(L@1)
+
+Fitting fixed-effects model:
+
+Iteration 0:   log likelihood =  -5218.266  
+Iteration 1:   log likelihood = -5208.9056  
+Iteration 2:   log likelihood = -5208.9038  
+Iteration 3:   log likelihood = -5208.9038  
+
+Refining starting values:
+
+Grid node 0:   log likelihood = -5229.3385
+
+Fitting full model:
+
+Iteration 0:   log likelihood = -5229.3385  
+Iteration 1:   log likelihood = -5213.9863  
+Iteration 2:   log likelihood = -5182.0484  
+Iteration 3:   log likelihood = -5178.4728  
+Iteration 4:   log likelihood = -5178.3076  
+Iteration 5:   log likelihood = -5178.3073  
+Iteration 6:   log likelihood = -5178.3069  
+Iteration 7:   log likelihood = -5178.3064  
+Iteration 8:   log likelihood =  -5178.306  
+Iteration 9:   log likelihood = -5178.3053  
+Iteration 10:  log likelihood =  -5178.305  
+Iteration 11:  log likelihood = -5178.3047  
+Iteration 12:  log likelihood = -5178.3046  
+
+Generalized structural equation model             Number of obs   =       2000
+Log likelihood = -5178.3046
+
+ ( 1)  [selected]L = 1
+ ( 2)  [var(L)]_cons = 1
+------------------------------------------------------------------------------
+             |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+wage <-      |
+        educ |   .9899541   .0532565    18.59   0.000     .8855733    1.094335
+         age |     .21313   .0206031    10.34   0.000     .1727486    .2535113
+           L |   5.974205   .5645889    10.58   0.000     4.867631    7.080779
+       _cons |   .4857517   1.077039     0.45   0.652    -1.625205    2.596709
+-------------+----------------------------------------------------------------
+selected <-  |
+     married |    .629573   .0953115     6.61   0.000      .442766    .8163801
+    children |    .620429   .0392907    15.79   0.000     .5434206    .6974374
+        educ |   .0788174   .0151815     5.19   0.000     .0490622    .1085726
+         age |    .051633   .0058737     8.79   0.000     .0401208    .0631453
+           L |          1  (constrained)
+       _cons |  -3.522863   .2677655   -13.16   0.000    -4.047674   -2.998052
+-------------+----------------------------------------------------------------
+       var(L)|          1  (constrained)
+-------------+----------------------------------------------------------------
+  var(e.wage)|   .3664683   5.183351                      3.35e-13    4.01e+11
+------------------------------------------------------------------------------
+
+. nlcom (sigma: sqrt(_b[var(e.wage):_cons] +_b[wage:L]^2)) (rho: _b[wage:L]/(sqrt(2)*sqrt(_b[var(e.wage):_cons] + _b[wage:L]^2)))
+
+       sigma:  sqrt(_b[var(e.wage):_cons] +_b[wage:L]^2)
+         rho:  _b[wage:L]/(sqrt(2)*sqrt(_b[var(e.wage):_cons] + _b[wage:L]^2))
+
+------------------------------------------------------------------------------
+             |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       sigma |   6.004797   .1657194    36.23   0.000     5.679993    6.329601
+         rho |   .7035043   .0512263    13.73   0.000     .6031026     .803906
+------------------------------------------------------------------------------
+
+. 
+. * Stata manual version
+. gsem (wage <- educ age A) (selected <- married children educ age A@1, probit), var(A@1)
+
+Fitting fixed-effects model:
+
+Iteration 0:   log likelihood =  -5218.266  
+Iteration 1:   log likelihood = -5208.9056  
+Iteration 2:   log likelihood = -5208.9038  
+Iteration 3:   log likelihood = -5208.9038  
+
+Refining starting values:
+
+Grid node 0:   log likelihood = -5229.3385
+
+Fitting full model:
+
+Iteration 0:   log likelihood = -5229.3385  
+Iteration 1:   log likelihood = -5213.9863  
+Iteration 2:   log likelihood = -5182.0484  
+Iteration 3:   log likelihood = -5178.4728  
+Iteration 4:   log likelihood = -5178.3076  
+Iteration 5:   log likelihood = -5178.3073  
+Iteration 6:   log likelihood = -5178.3069  
+Iteration 7:   log likelihood = -5178.3064  
+Iteration 8:   log likelihood =  -5178.306  
+Iteration 9:   log likelihood = -5178.3053  
+Iteration 10:  log likelihood =  -5178.305  
+Iteration 11:  log likelihood = -5178.3047  
+Iteration 12:  log likelihood = -5178.3046  
+
+Generalized structural equation model             Number of obs   =       2000
+Log likelihood = -5178.3046
+
+ ( 1)  [selected]A = 1
+ ( 2)  [var(A)]_cons = 1
+------------------------------------------------------------------------------
+             |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+wage <-      |
+        educ |   .9899541   .0532565    18.59   0.000     .8855733    1.094335
+         age |     .21313   .0206031    10.34   0.000     .1727486    .2535113
+           A |   5.974205   .5645889    10.58   0.000     4.867631    7.080779
+       _cons |   .4857517   1.077039     0.45   0.652    -1.625205    2.596709
+-------------+----------------------------------------------------------------
+selected <-  |
+     married |    .629573   .0953115     6.61   0.000      .442766    .8163801
+    children |    .620429   .0392907    15.79   0.000     .5434206    .6974374
+        educ |   .0788174   .0151815     5.19   0.000     .0490622    .1085726
+         age |    .051633   .0058737     8.79   0.000     .0401208    .0631453
+           A |          1  (constrained)
+       _cons |  -3.522863   .2677655   -13.16   0.000    -4.047674   -2.998052
+-------------+----------------------------------------------------------------
+       var(A)|          1  (constrained)
+-------------+----------------------------------------------------------------
+  var(e.wage)|   .3664683   5.183351                      3.35e-13    4.01e+11
+------------------------------------------------------------------------------
+
+. nlcom (sigma: sqrt(_b[var(e.wage):_cons] +_b[wage:A]^2)) (rho: _b[wage:A]/(sqrt(2)*sqrt(_b[var(e.wage):_cons] + _b[wage:A]^2)))
+
+       sigma:  sqrt(_b[var(e.wage):_cons] +_b[wage:A]^2)
+         rho:  _b[wage:A]/(sqrt(2)*sqrt(_b[var(e.wage):_cons] + _b[wage:A]^2))
+
+------------------------------------------------------------------------------
+             |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       sigma |   6.004797   .1657194    36.23   0.000     5.679993    6.329601
+         rho |   .7035043   .0512263    13.73   0.000     .6031026     .803906
+------------------------------------------------------------------------------
+
+. 
+. ***********************************************
+. * Now, do example 45g (Heckman Selection model)
+. * Internet version
+. ***********************************************
+. use http://www.stata-press.com/data/r13/gsem_womenwk, clear
+(Fictional data on women and work)
+
+. gen selected = 0 if ~mi(wage)
+(657 missing values generated)
+
+. gen notselected = 0 if mi(wage)
+(1343 missing values generated)
+
+. 
+. * Stata manual version
+. gsem (wage <- educ age L) (selected <- married children educ age L@1, family(gaussian, udepvar(notselected))), var(L@1 e.wage@a
+>  e.selected@a)
+
+Fitting fixed-effects model:
+
+Iteration 0:   log likelihood = -5568.1366  
+Iteration 1:   log likelihood = -5211.0882  (not concave)
+Iteration 2:   log likelihood = -5209.4228  (not concave)
+Iteration 3:   log likelihood = -5209.2214  
+Iteration 4:   log likelihood = -5209.1638  
+Iteration 5:   log likelihood = -5208.9052  (not concave)
+Iteration 6:   log likelihood = -5208.9044  (not concave)
+Iteration 7:   log likelihood = -5208.9042  (not concave)
+Iteration 8:   log likelihood =  -5208.904  
+Iteration 9:   log likelihood = -5208.9038  
+
+Refining starting values:
+
+Grid node 0:   log likelihood = -5259.1366
+
+Fitting full model:
+
+Iteration 0:   log likelihood = -5557.2489  (not concave)
+Iteration 1:   log likelihood = -5439.0882  (not concave)
+Iteration 2:   log likelihood = -5285.2854  
+Iteration 3:   log likelihood = -5229.0964  
+Iteration 4:   log likelihood = -5179.3914  
+Iteration 5:   log likelihood = -5178.3235  
+Iteration 6:   log likelihood = -5178.3046  
+Iteration 7:   log likelihood = -5178.3046  
+
+Generalized structural equation model             Number of obs   =       2000
+Log likelihood = -5178.3046
+
+ ( 1)  [selected]L = 1
+ ( 2)  [var(e.selected)]_cons - [var(e.wage)]_cons = 0
+ ( 3)  [var(L)]_cons = 1
+--------------------------------------------------------------------------------
+               |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------+----------------------------------------------------------------
+wage <-        |
+          educ |   .9899509   .0532552    18.59   0.000     .8855727    1.094329
+           age |    .213128    .020602    10.34   0.000     .1727488    .2535073
+             L |   5.923733   .1846827    32.08   0.000     5.561761    6.285704
+         _cons |   .4859256   1.076867     0.45   0.652    -1.624696    2.596547
+---------------+----------------------------------------------------------------
+selected <-    |
+       married |    .624276   .1054324     5.92   0.000     .4176322    .8309197
+      children |    .615211   .0652008     9.44   0.000     .4874197    .7430023
+          educ |   .0781544   .0162868     4.80   0.000     .0462328     .110076
+           age |   .0511984    .006637     7.71   0.000     .0381901    .0642067
+             L |          1  (constrained)
+         _cons |  -3.493224   .3730411    -9.36   0.000    -4.224371   -2.762077
+---------------+----------------------------------------------------------------
+         var(L)|          1  (constrained)
+---------------+----------------------------------------------------------------
+var(e.selected)|   .9664716   .2689702                      .5601427    1.667552
+    var(e.wage)|   .9664716   .2689702                      .5601427    1.667552
+--------------------------------------------------------------------------------
+
+. nlcom (sigma: sqrt(_b[var(e.wage):_cons] +_b[wage:L]^2)) (rho: _b[wage:L]/(sqrt((_b[var(e.wage):_cons]+1)*(_b[var(e.wage):_cons
+> ] + _b[wage:L]^2))))
+
+       sigma:  sqrt(_b[var(e.wage):_cons] +_b[wage:L]^2)
+         rho:  _b[wage:L]/(sqrt((_b[var(e.wage):_cons]+1)*(_b[var(e.wage):_cons] + _b[wage:L]^2)))
+
+------------------------------------------------------------------------------
+             |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       sigma |   6.004755   .1656476    36.25   0.000     5.680091    6.329418
+         rho |   .7034874   .0511867    13.74   0.000     .6031633    .8038116
+------------------------------------------------------------------------------
+
+. 
+. * Modified version to see if syntax of "L" and "a" matter
+. gsem (wage <- educ age A) (selected <- married children educ age A@1, family(gaussian, udepvar(notselected))), var(A@1 e.wage@q
+>  e.selected@q)
+
+Fitting fixed-effects model:
+
+Iteration 0:   log likelihood = -5568.1366  
+Iteration 1:   log likelihood = -5211.0882  (not concave)
+Iteration 2:   log likelihood = -5209.4228  (not concave)
+Iteration 3:   log likelihood = -5209.2214  
+Iteration 4:   log likelihood = -5209.1638  
+Iteration 5:   log likelihood = -5208.9052  (not concave)
+Iteration 6:   log likelihood = -5208.9044  (not concave)
+Iteration 7:   log likelihood = -5208.9042  (not concave)
+Iteration 8:   log likelihood =  -5208.904  
+Iteration 9:   log likelihood = -5208.9038  
+
+Refining starting values:
+
+Grid node 0:   log likelihood = -5259.1366
+
+Fitting full model:
+
+Iteration 0:   log likelihood = -5557.2489  (not concave)
+Iteration 1:   log likelihood = -5439.0882  (not concave)
+Iteration 2:   log likelihood = -5285.2854  
+Iteration 3:   log likelihood = -5229.0964  
+Iteration 4:   log likelihood = -5179.3914  
+Iteration 5:   log likelihood = -5178.3235  
+Iteration 6:   log likelihood = -5178.3046  
+Iteration 7:   log likelihood = -5178.3046  
+
+Generalized structural equation model             Number of obs   =       2000
+Log likelihood = -5178.3046
+
+ ( 1)  [selected]A = 1
+ ( 2)  [var(e.selected)]_cons - [var(e.wage)]_cons = 0
+ ( 3)  [var(A)]_cons = 1
+--------------------------------------------------------------------------------
+               |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------+----------------------------------------------------------------
+wage <-        |
+          educ |   .9899509   .0532552    18.59   0.000     .8855727    1.094329
+           age |    .213128    .020602    10.34   0.000     .1727488    .2535073
+             A |   5.923733   .1846827    32.08   0.000     5.561761    6.285704
+         _cons |   .4859256   1.076867     0.45   0.652    -1.624696    2.596547
+---------------+----------------------------------------------------------------
+selected <-    |
+       married |    .624276   .1054324     5.92   0.000     .4176322    .8309197
+      children |    .615211   .0652008     9.44   0.000     .4874197    .7430023
+          educ |   .0781544   .0162868     4.80   0.000     .0462328     .110076
+           age |   .0511984    .006637     7.71   0.000     .0381901    .0642067
+             A |          1  (constrained)
+         _cons |  -3.493224   .3730411    -9.36   0.000    -4.224371   -2.762077
+---------------+----------------------------------------------------------------
+         var(A)|          1  (constrained)
+---------------+----------------------------------------------------------------
+var(e.selected)|   .9664716   .2689702                      .5601427    1.667552
+    var(e.wage)|   .9664716   .2689702                      .5601427    1.667552
+--------------------------------------------------------------------------------
+
+. nlcom (sigma: sqrt(_b[var(e.wage):_cons] +_b[wage:A]^2)) (rho: _b[wage:A]/(sqrt((_b[var(e.wage):_cons]+1)*(_b[var(e.wage):_cons
+> ] + _b[wage:A]^2))))
+
+       sigma:  sqrt(_b[var(e.wage):_cons] +_b[wage:A]^2)
+         rho:  _b[wage:A]/(sqrt((_b[var(e.wage):_cons]+1)*(_b[var(e.wage):_cons] + _b[wage:A]^2)))
+
+------------------------------------------------------------------------------
+             |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       sigma |   6.004755   .1656476    36.25   0.000     5.680091    6.329418
+         rho |   .7034874   .0511867    13.74   0.000     .6031633    .8038116
+------------------------------------------------------------------------------
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /work/A0943_vjh3_group/Estimation/gsemPractice/gsemHeckmanExample.log
+  log type:  text
+ closed on:  10 Jan 2014, 16:44:06
+---------------------------------------------------------------------------------------------------------------------------------
