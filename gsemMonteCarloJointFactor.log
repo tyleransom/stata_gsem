@@ -1,0 +1,437 @@
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /home/ransom/stata_gsem/gsemMonteCarloJointFactor.log
+  log type:  text
+ opened on:   8 Oct 2018, 13:00:44
+
+. 
+. set seed 32
+
+. set obs 1000
+number of observations (_N) was 0, now 1,000
+
+. 
+. scalar T = 10
+
+. gen id = floor((_n-1)/`=T')+1
+
+. bys id: gen period = _n
+
+. xtset id period
+       panel variable:  id (strongly balanced)
+        time variable:  period, 1 to 10
+                delta:  1 unit
+
+. xtsum id
+
+Variable         |      Mean   Std. Dev.       Min        Max |    Observations
+-----------------+--------------------------------------------+----------------
+id       overall |      50.5   28.88051          1        100 |     N =    1000
+         between |             29.01149          1        100 |     n =     100
+         within  |                    0       50.5       50.5 |     T =      10
+
+. 
+. scalar bcons  = 1.45
+
+. scalar bmeduc = .39
+
+. scalar bexper = .05
+
+. scalar bexper2 = -.0001
+
+. scalar alphaC  = .32
+
+. scalar alphaC2 = .69
+
+. scalar alphaW  = .45
+
+. scalar vasvab1  = .45
+
+. scalar vasvab2  = .75
+
+. scalar vasvab3  = .33
+
+. scalar vasvab4  = .67
+
+. scalar vasvab5  = .91
+
+. scalar vasvab6  = .25
+
+. scalar vNoiseAsvab1  = .75
+
+. scalar vNoiseAsvab2  = .85
+
+. scalar vNoiseAsvab3  = .55
+
+. scalar vNoiseAsvab4  = .45
+
+. scalar vNoiseAsvab5  = .35
+
+. scalar vNoiseAsvab6  = .95
+
+. 
+. gen meduA = rnormal(0,1)
+
+. bys id: gen meduc = meduA[1]
+
+. gen factA = rnormal(0,1)
+
+. bys id: gen fact = factA[1]
+
+. gen asvab1A = sqrt(`=vasvab1')*fact + sqrt(`=vNoiseAsvab1')*rnormal(0,1)
+
+. bys id: gen asvab1 = asvab1A[1]
+
+. gen asvab2A = sqrt(`=vasvab2')*fact + sqrt(`=vNoiseAsvab2')*rnormal(0,1)
+
+. bys id: gen asvab2 = asvab2A[1]
+
+. gen asvab3A = sqrt(`=vasvab3')*fact + sqrt(`=vNoiseAsvab3')*rnormal(0,1)
+
+. bys id: gen asvab3 = asvab3A[1]
+
+. gen asvab4A = sqrt(`=vasvab4')*fact + sqrt(`=vNoiseAsvab4')*rnormal(0,1)
+
+. bys id: gen asvab4 = asvab4A[1]
+
+. gen asvab5A = sqrt(`=vasvab5')*fact + sqrt(`=vNoiseAsvab5')*rnormal(0,1)
+
+. bys id: gen asvab5 = asvab5A[1]
+
+. gen asvab6A = sqrt(`=vasvab6')*fact + sqrt(`=vNoiseAsvab6')*rnormal(0,1)
+
+. bys id: gen asvab6 = asvab6A[1]
+
+. gen fact2A = rnormal(0,1)
+
+. bys id: gen fact2 = fact2A[1]
+
+. drop factA fact2A meduA asvab?A
+
+. 
+. gen double draw = runiform()
+
+. gen double noise = rnormal(0,.35)
+
+. gen double exper = rnormal(5,10)
+
+. replace exper = 0 if exper<=0
+(290 real changes made)
+
+. 
+. l id period exper fact draw asvab? in 1/20, sepby(id)
+
+     +--------------------------------------------------------------------------------------------------------------------+
+     | id   period       exper       fact        draw     asvab1     asvab2      asvab3     asvab4      asvab5     asvab6 |
+     |--------------------------------------------------------------------------------------------------------------------|
+  1. |  1        1   13.143356   .7667444   .37710582   .1552372   1.029032    1.396162   1.727198    2.286156   .0434677 |
+  2. |  1        2   9.4600153   .7667444   .66522533   .1552372   1.029032    1.396162   1.727198    2.286156   .0434677 |
+  3. |  1        3    1.009903   .7667444   .78912363   .1552372   1.029032    1.396162   1.727198    2.286156   .0434677 |
+  4. |  1        4   17.022905   .7667444   .46086531   .1552372   1.029032    1.396162   1.727198    2.286156   .0434677 |
+  5. |  1        5   4.3732343   .7667444   .36065722   .1552372   1.029032    1.396162   1.727198    2.286156   .0434677 |
+  6. |  1        6   33.447662   .7667444     .761848   .1552372   1.029032    1.396162   1.727198    2.286156   .0434677 |
+  7. |  1        7   2.4718069   .7667444   .10261383   .1552372   1.029032    1.396162   1.727198    2.286156   .0434677 |
+  8. |  1        8           0   .7667444     .625816   .1552372   1.029032    1.396162   1.727198    2.286156   .0434677 |
+  9. |  1        9   4.0650504   .7667444   .64870179   .1552372   1.029032    1.396162   1.727198    2.286156   .0434677 |
+ 10. |  1       10   9.2718928   .7667444   .97515815   .1552372   1.029032    1.396162   1.727198    2.286156   .0434677 |
+     |--------------------------------------------------------------------------------------------------------------------|
+ 11. |  2        1           0   .2616594   .07605628   1.164525   2.441902   -.6261716   1.125744   -.1083461   1.306645 |
+ 12. |  2        2   7.0454135   .2616594   .53881567   1.164525   2.441902   -.6261716   1.125744   -.1083461   1.306645 |
+ 13. |  2        3   8.2367412   .2616594   .15944973   1.164525   2.441902   -.6261716   1.125744   -.1083461   1.306645 |
+ 14. |  2        4   14.367307   .2616594   .86211242   1.164525   2.441902   -.6261716   1.125744   -.1083461   1.306645 |
+ 15. |  2        5           0   .2616594   .51949085   1.164525   2.441902   -.6261716   1.125744   -.1083461   1.306645 |
+ 16. |  2        6   7.3652996   .2616594   .61659582   1.164525   2.441902   -.6261716   1.125744   -.1083461   1.306645 |
+ 17. |  2        7   6.3694636   .2616594   .44201915   1.164525   2.441902   -.6261716   1.125744   -.1083461   1.306645 |
+ 18. |  2        8   4.1376192   .2616594   .32311983   1.164525   2.441902   -.6261716   1.125744   -.1083461   1.306645 |
+ 19. |  2        9           0   .2616594   .21752117   1.164525   2.441902   -.6261716   1.125744   -.1083461   1.306645 |
+ 20. |  2       10   19.454916   .2616594    .6342541   1.164525   2.441902   -.6261716   1.125744   -.1083461   1.306645 |
+     +--------------------------------------------------------------------------------------------------------------------+
+
+. 
+. gen p1 = exp(`=bcons' + `=bmeduc'*meduc + `=bexper'*exper + `=bexper2'*exper^2 + `=alphaC'*fact )/(1+exp(`=bcons' + `=bmeduc'*meduc + `=bexper'*exper + `=bexper2'*exper^2 + `=alphaC'*fact))
+
+. gen p2 = exp(`=bcons' + `=bmeduc'*meduc + `=bexper'*exper + `=bexper2'*exper^2 + `=alphaC'*fact + `=alphaC2'*fact2)/(1+exp(`=bcons' + `=bmeduc'*meduc + `=bexper'*exper + `=bexper2'*exper^2 + `=alphaC'*fact + `=alphaC2'*fact2))
+
+. gen work = p1>draw
+
+. gen work2= p2>draw
+
+. 
+. gen lnWage = `=bcons' + `=bexper'*exper + `=bexper2'*exper^2 + `=alphaW'*fact  + noise if work
+(147 missing values generated)
+
+. gen lnWage2= `=bcons' + `=bexper'*exper + `=bexper2'*exper^2 + `=alphaW'*fact2 + noise if work
+(147 missing values generated)
+
+. 
+. * wage RE by itself
+. xtreg lnWage c.exper##c.exper, re
+
+Random-effects GLS regression                   Number of obs     =        853
+Group variable: id                              Number of groups  =        100
+
+R-sq:                                           Obs per group:
+     within  = 0.5252                                         min =          5
+     between = 0.0653                                         avg =        8.5
+     overall = 0.2698                                         max =         10
+
+                                                Wald chi2(2)      =     838.97
+corr(u_i, X)   = 0 (assumed)                    Prob > chi2       =     0.0000
+
+---------------------------------------------------------------------------------
+         lnWage |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------+----------------------------------------------------------------
+          exper |    .043837   .0044096     9.94   0.000     .0351944    .0524797
+                |
+c.exper#c.exper |   .0002424   .0001879     1.29   0.197    -.0001259    .0006106
+                |
+          _cons |   1.448687   .0535253    27.07   0.000     1.343779    1.553595
+----------------+----------------------------------------------------------------
+        sigma_u |  .49808316
+        sigma_e |  .34623494
+            rho |  .67421227   (fraction of variance due to u_i)
+---------------------------------------------------------------------------------
+
+. gsem (lnWage <- c.exper##c.exper Factor[id]), var(Factor[id]@1)
+
+Fitting fixed-effects model:
+
+Iteration 0:   log likelihood = -773.94267  
+Iteration 1:   log likelihood = -773.94267  
+
+Refining starting values:
+
+Grid node 0:   log likelihood = -644.94531
+
+Fitting full model:
+
+Iteration 0:   log likelihood = -644.94531  (not concave)
+Iteration 1:   log likelihood = -544.57677  (not concave)
+Iteration 2:   log likelihood = -461.52036  
+Iteration 3:   log likelihood = -449.21853  
+Iteration 4:   log likelihood = -449.10503  
+Iteration 5:   log likelihood = -449.10486  
+Iteration 6:   log likelihood = -449.10486  
+
+Generalized structural equation model           Number of obs     =        853
+Response       : lnWage
+Family         : Gaussian
+Link           : identity
+Log likelihood = -449.10486
+
+ ( 1)  [var(Factor[id])]_cons = 1
+---------------------------------------------------------------------------------
+                |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------+----------------------------------------------------------------
+lnWage <-       |
+          exper |   .0438427   .0044083     9.95   0.000     .0352027    .0524828
+                |
+c.exper#c.exper |   .0002421   .0001878     1.29   0.197     -.000126    .0006103
+                |
+     Factor[id] |   .4907267    .036816    13.33   0.000     .4185685    .5628848
+                |
+          _cons |   1.448713   .0528848    27.39   0.000      1.34506    1.552365
+----------------+----------------------------------------------------------------
+ var(Factor[id])|          1  (constrained)
+----------------+----------------------------------------------------------------
+   var(e.lnWage)|   .1195816   .0061639                      .1080909    .1322939
+---------------------------------------------------------------------------------
+
+. 
+. * logit RE by itself
+. xtlogit work meduc c.exper##c.exper, re
+
+Fitting comparison model:
+
+Iteration 0:   log likelihood = -417.46979  
+Iteration 1:   log likelihood = -404.88437  
+Iteration 2:   log likelihood = -404.41574  
+Iteration 3:   log likelihood = -404.41309  
+Iteration 4:   log likelihood = -404.41309  
+
+Fitting full model:
+
+tau =  0.0     log likelihood = -404.41309
+tau =  0.1     log likelihood = -404.42412
+
+Iteration 0:   log likelihood = -404.42412  
+Iteration 1:   log likelihood = -404.29424  
+Iteration 2:   log likelihood =  -404.2854  
+Iteration 3:   log likelihood = -404.28523  
+Iteration 4:   log likelihood = -404.28523  
+
+Random-effects logistic regression              Number of obs     =      1,000
+Group variable: id                              Number of groups  =        100
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =         10
+                                                              avg =       10.0
+                                                              max =         10
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(3)      =      23.17
+Log likelihood  = -404.28523                    Prob > chi2       =     0.0000
+
+---------------------------------------------------------------------------------
+           work |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------+----------------------------------------------------------------
+          meduc |   .3087993   .1052209     2.93   0.003     .1025701    .5150285
+          exper |   .0652416   .0370913     1.76   0.079     -.007456    .1379393
+                |
+c.exper#c.exper |  -.0003312   .0018367    -0.18   0.857    -.0039311    .0032686
+                |
+          _cons |   1.444937   .1380068    10.47   0.000     1.174448    1.715425
+----------------+----------------------------------------------------------------
+       /lnsig2u |  -2.775886   2.096739                      -6.88542    1.333648
+----------------+----------------------------------------------------------------
+        sigma_u |   .2495882   .2616607                      .0319779     1.94804
+            rho |   .0185833   .0382403                      .0003107    .5356395
+---------------------------------------------------------------------------------
+LR test of rho=0: chibar2(01) = 0.26                   Prob >= chibar2 = 0.307
+
+. gsem (i.work <- meduc c.exper##c.exper Factor[id], mlogit), var(Factor[id]@1)
+
+Fitting fixed-effects model:
+
+Iteration 0:   log likelihood = -417.46979  
+Iteration 1:   log likelihood = -404.88437  
+Iteration 2:   log likelihood = -404.41574  
+Iteration 3:   log likelihood = -404.41309  
+Iteration 4:   log likelihood = -404.41309  
+
+Refining starting values:
+
+Grid node 0:   log likelihood = -413.98007
+
+Fitting full model:
+
+Iteration 0:   log likelihood = -413.98007  
+Iteration 1:   log likelihood = -407.30406  
+Iteration 2:   log likelihood = -404.37135  
+Iteration 3:   log likelihood = -404.28533  
+Iteration 4:   log likelihood = -404.28523  
+Iteration 5:   log likelihood = -404.28523  
+
+Generalized structural equation model           Number of obs     =      1,000
+Response       : work
+Base outcome   : 0
+Family         : multinomial
+Link           : logit
+Log likelihood = -404.28523
+
+ ( 1)  [var(Factor[id])]_cons = 1
+---------------------------------------------------------------------------------
+                |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------+----------------------------------------------------------------
+0.work          |  (base outcome)
+----------------+----------------------------------------------------------------
+1.work <-       |
+          meduc |   .3087993   .1052209     2.93   0.003     .1025701    .5150285
+          exper |   .0652416   .0370913     1.76   0.079     -.007456    .1379393
+                |
+c.exper#c.exper |  -.0003312   .0018367    -0.18   0.857    -.0039311    .0032686
+                |
+     Factor[id] |  -.2495879   .2616613    -0.95   0.340    -.7624347    .2632588
+                |
+          _cons |   1.444937   .1380068    10.47   0.000     1.174448    1.715425
+----------------+----------------------------------------------------------------
+ var(Factor[id])|          1  (constrained)
+---------------------------------------------------------------------------------
+
+. 
+. * joint estimation
+. gsem (i.work <- meduc c.exper##c.exper Factor[id], mlogit) (lnWage <- c.exper##c.exper Factor[id]), var(Factor[id]@1)
+
+Fitting fixed-effects model:
+
+Iteration 0:   log likelihood = -1191.4125  
+Iteration 1:   log likelihood =  -1178.827  
+Iteration 2:   log likelihood = -1178.3584  
+Iteration 3:   log likelihood = -1178.3558  
+Iteration 4:   log likelihood = -1178.3558  
+
+Refining starting values:
+
+Grid node 0:   log likelihood = -1176.5614
+
+Fitting full model:
+
+Iteration 0:   log likelihood = -1176.5614  (not concave)
+Iteration 1:   log likelihood = -987.27032  (not concave)
+Iteration 2:   log likelihood = -855.88791  
+Iteration 3:   log likelihood = -846.16665  
+Iteration 4:   log likelihood = -845.59703  
+Iteration 5:   log likelihood = -845.59477  
+Iteration 6:   log likelihood = -845.59477  
+
+Generalized structural equation model           Number of obs     =      1,000
+
+Response       : work                           Number of obs     =      1,000
+Base outcome   : 0
+Family         : multinomial
+Link           : logit
+
+Response       : lnWage                         Number of obs     =        853
+Family         : Gaussian
+Link           : identity
+
+Log likelihood = -845.59477
+
+ ( 1)  [var(Factor[id])]_cons = 1
+---------------------------------------------------------------------------------
+                |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------+----------------------------------------------------------------
+0.work          |  (base outcome)
+----------------+----------------------------------------------------------------
+1.work <-       |
+          meduc |    .356979   .1018783     3.50   0.000     .1573013    .5566568
+          exper |   .0636387   .0370557     1.72   0.086    -.0089891    .1362666
+                |
+c.exper#c.exper |  -.0002814   .0018279    -0.15   0.878     -.003864    .0033011
+                |
+     Factor[id] |   .3827981   .1026695     3.73   0.000     .1815695    .5840268
+                |
+          _cons |    1.47663   .1391662    10.61   0.000      1.20387    1.749391
+----------------+----------------------------------------------------------------
+lnWage <-       |
+          exper |   .0441341   .0044063    10.02   0.000     .0354979    .0527703
+                |
+c.exper#c.exper |   .0002329   .0001877     1.24   0.215     -.000135    .0006009
+                |
+     Factor[id] |   .4913465   .0368567    13.33   0.000     .4191086    .5635843
+                |
+          _cons |   1.446135   .0529418    27.32   0.000     1.342371    1.549899
+----------------+----------------------------------------------------------------
+ var(Factor[id])|          1  (constrained)
+----------------+----------------------------------------------------------------
+   var(e.lnWage)|   .1195297   .0061585                      .1080488    .1322307
+---------------------------------------------------------------------------------
+
+. 
+. * joint estimation with measurement system
+. gsem (Ability -> asvab1-asvab6) (i.work <- meduc c.exper##c.exper Ability, mlogit) (lnWage <- c.exper##c.exper Ability), latent(Ability ) nocapslatent difficult
+
+Fitting fixed-effects model:
+
+Iteration 0:   log likelihood = -10579.191  
+Iteration 1:   log likelihood = -10566.605  
+Iteration 2:   log likelihood = -10566.137  
+Iteration 3:   log likelihood = -10566.134  
+Iteration 4:   log likelihood = -10566.134  
+
+Refining starting values:
+
+Grid node 0:   log likelihood =  -19756333
+
+Fitting full model:
+
+Iteration 0:   log likelihood =  -19756333  (not concave)
+cannot compute an improvement -- discontinuous region encountered
+r(430);
+
+end of do-file
+
+r(430);
+
+. exit, clear
