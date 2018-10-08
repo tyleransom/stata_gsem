@@ -79,7 +79,10 @@ gsem (i.work <- meduc c.exper##c.exper Factor[id], mlogit), var(Factor[id]@1)
 * joint estimation
 gsem (i.work <- meduc c.exper##c.exper Factor[id], mlogit) (lnWage <- c.exper##c.exper Factor[id]), var(Factor[id]@1)
 
-* joint estimation with measurement system
+* joint estimation of measurement system with wage only
+gsem (Ability -> asvab1-asvab6) (lnWage <- c.exper##c.exper Ability), latent(Ability ) nocapslatent difficult
+
+* joint estimation with measurement system with everything
 gsem (Ability -> asvab1-asvab6) (i.work <- meduc c.exper##c.exper Ability, mlogit) (lnWage <- c.exper##c.exper Ability), latent(Ability ) nocapslatent difficult
 
 * joint estimation with 2 factors (different DGP, so different dependent variables)

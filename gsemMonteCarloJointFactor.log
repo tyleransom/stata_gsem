@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /home/ransom/stata_gsem/gsemMonteCarloJointFactor.log
   log type:  text
- opened on:   8 Oct 2018, 13:00:44
+ opened on:   8 Oct 2018, 13:30:45
 
 . 
 . set seed 32
@@ -409,7 +409,106 @@ c.exper#c.exper |   .0002329   .0001877     1.24   0.215     -.000135    .000600
 ---------------------------------------------------------------------------------
 
 . 
-. * joint estimation with measurement system
+. * joint estimation of measurement system with wage only
+. gsem (Ability -> asvab1-asvab6) (lnWage <- c.exper##c.exper Ability), latent(Ability ) nocapslatent difficult
+
+Fitting fixed-effects model:
+
+Iteration 0:   log likelihood = -10161.721  
+Iteration 1:   log likelihood = -10161.721  
+
+Refining starting values:
+
+Grid node 0:   log likelihood = -8617.8625
+
+Fitting full model:
+
+Iteration 0:   log likelihood = -8617.8625  
+Iteration 1:   log likelihood = -8614.4359  
+Iteration 2:   log likelihood = -8614.4098  
+Iteration 3:   log likelihood = -8614.4098  
+
+Generalized structural equation model           Number of obs     =      1,000
+
+Response       : asvab1                         Number of obs     =      1,000
+Family         : Gaussian
+Link           : identity
+
+Response       : asvab2                         Number of obs     =      1,000
+Family         : Gaussian
+Link           : identity
+
+Response       : asvab3                         Number of obs     =      1,000
+Family         : Gaussian
+Link           : identity
+
+Response       : asvab4                         Number of obs     =      1,000
+Family         : Gaussian
+Link           : identity
+
+Response       : asvab5                         Number of obs     =      1,000
+Family         : Gaussian
+Link           : identity
+
+Response       : asvab6                         Number of obs     =      1,000
+Family         : Gaussian
+Link           : identity
+
+Response       : lnWage                         Number of obs     =        853
+Family         : Gaussian
+Link           : identity
+
+Log likelihood = -8614.4098
+
+ ( 1)  [asvab1]Ability = 1
+---------------------------------------------------------------------------------
+                |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------+----------------------------------------------------------------
+asvab1 <-       |
+        Ability |          1  (constrained)
+          _cons |   .1204116   .0353341     3.41   0.001     .0511581    .1896652
+----------------+----------------------------------------------------------------
+asvab2 <-       |
+        Ability |   1.549893   .0946931    16.37   0.000     1.364297    1.735488
+          _cons |    .100707   .0451519     2.23   0.026     .0122109    .1892031
+----------------+----------------------------------------------------------------
+asvab3 <-       |
+        Ability |   1.002787   .0618578    16.21   0.000     .8815479    1.124026
+          _cons |   .0358346   .0294221     1.22   0.223    -.0218317    .0935009
+----------------+----------------------------------------------------------------
+asvab4 <-       |
+        Ability |   1.553246   .0865505    17.95   0.000      1.38361    1.722882
+          _cons |  -.1240282   .0382449    -3.24   0.001    -.1989868   -.0490696
+----------------+----------------------------------------------------------------
+asvab5 <-       |
+        Ability |   1.738051   .0915469    18.99   0.000     1.558622     1.91748
+          _cons |   -.006519   .0390017    -0.17   0.867    -.0829609     .069923
+----------------+----------------------------------------------------------------
+asvab6 <-       |
+        Ability |    .926572   .0666371    13.90   0.000     .7959656    1.057178
+          _cons |  -.0741734   .0342323    -2.17   0.030    -.1412675   -.0070792
+----------------+----------------------------------------------------------------
+lnWage <-       |
+          exper |   .0436997   .0046167     9.47   0.000     .0346512    .0527482
+                |
+c.exper#c.exper |   .0002508   .0001958     1.28   0.200     -.000133    .0006346
+                |
+        Ability |   .7942711   .0441407    17.99   0.000     .7077569    .8807853
+          _cons |   1.451198   .0255422    56.82   0.000     1.401136    1.501259
+----------------+----------------------------------------------------------------
+    var(Ability)|   .3923954    .042452                      .3174207    .4850792
+----------------+----------------------------------------------------------------
+   var(e.asvab1)|   .8561016   .0402035                      .7808218    .9386393
+   var(e.asvab2)|   1.096096   .0540314                      .9951515    1.207281
+   var(e.asvab3)|   .4710744   .0231085                      .4278918    .5186149
+   var(e.asvab4)|   .5159885   .0290313                      .4621132    .5761447
+   var(e.asvab5)|   .3357768   .0241652                      .2916026    .3866428
+   var(e.asvab6)|   .8349677   .0390204                      .7618871    .9150583
+   var(e.lnWage)|   .1153905   .0071871                        .10213    .1303728
+---------------------------------------------------------------------------------
+
+. 
+. * joint estimation with measurement system with everything
 . gsem (Ability -> asvab1-asvab6) (i.work <- meduc c.exper##c.exper Ability, mlogit) (lnWage <- c.exper##c.exper Ability), latent(Ability ) nocapslatent difficult
 
 Fitting fixed-effects model:
@@ -434,4 +533,9 @@ end of do-file
 
 r(430);
 
-. exit, clear
+. log close
+      name:  <unnamed>
+       log:  /home/ransom/stata_gsem/gsemMonteCarloJointFactor.log
+  log type:  text
+ closed on:   8 Oct 2018, 13:31:29
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
