@@ -5,7 +5,7 @@ capture log close
 log using gsemMonteCarloJointFactor.log, replace
 
 set seed 32
-set obs 1000
+set obs 100000
 
 scalar T = 10
 gen id = floor((_n-1)/`=T')+1
@@ -20,6 +20,7 @@ scalar bexper2 = -.0001
 scalar alphaC  = .32
 scalar alphaC2 = .69
 scalar alphaW  = .45
+scalar alphaW2 = .15
 scalar vasvab1  = .45
 scalar vasvab2  = .75
 scalar vasvab3  = .33
@@ -65,8 +66,14 @@ gen p2 = exp(`=bcons' + `=bmeduc'*meduc + `=bexper'*exper + `=bexper2'*exper^2 +
 gen work = p1>draw
 gen work2= p2>draw
 
-gen lnWage = `=bcons' + `=bexper'*exper + `=bexper2'*exper^2 + `=alphaW'*fact  + noise if work
-gen lnWage2= `=bcons' + `=bexper'*exper + `=bexper2'*exper^2 + `=alphaW'*fact2 + noise if work
+gen lnWage = `=bcons' + `=bexper'*exper + `=bexper2'*exper^2 + `=alphaW'*fact                    + noise if work
+gen lnWage2= `=bcons' + `=bexper'*exper + `=bexper2'*exper^2 + `=alphaW'*fact + `=alphaW2'*fact2 + noise if work2
+
+* infeasible
+reg lnWage c.exper##c.exper fact if work
+reg lnWage2 c.exper##c.exper fact fact2 if work2
+logit work  meduc c.exper##c.exper fact
+logit work2 meduc c.exper##c.exper fact fact2
 
 * wage RE by itself
 xtreg lnWage c.exper##c.exper, re
@@ -79,14 +86,29 @@ gsem (i.work <- meduc c.exper##c.exper Factor[id], mlogit), var(Factor[id]@1)
 * joint estimation
 gsem (i.work <- meduc c.exper##c.exper Factor[id], mlogit) (lnWage <- c.exper##c.exper Factor[id]), var(Factor[id]@1)
 
+forv x=1/6 {
+    bys id: replace asvab`x' = . if _n>1
+}
+
+* simple estimation of wage only
+gsem (lnWage <- c.exper##c.exper), nocapslatent difficult dnumerical nonrtolerance
+matrix bwage0 = e(b)
+
 * joint estimation of measurement system with wage only
-gsem (Ability -> asvab1-asvab6) (lnWage <- c.exper##c.exper Ability), latent(Ability ) nocapslatent difficult
+gsem (Ability -> asvab1-asvab6) (lnWage <- c.exper##c.exper Ability), latent(Ability) var(Ability@1) nocapslatent difficult dnumerical nonrtolerance
+matrix bwage = e(b)
+
+* joint estimation of measurement system with labor supply only
+gsem (Ability -> asvab1-asvab6) (i.work <- meduc c.exper##c.exper Ability, mlogit), latent(Ability) var(Ability@1) nocapslatent difficult dnumerical nonrtolerance
+matrix bchoice = e(b)
 
 * joint estimation with measurement system with everything
-gsem (Ability -> asvab1-asvab6) (i.work <- meduc c.exper##c.exper Ability, mlogit) (lnWage <- c.exper##c.exper Ability), latent(Ability ) nocapslatent difficult
+matrix temp = bwage0,bchoice
+gsem (Ability -> asvab1-asvab6) (i.work <- meduc c.exper##c.exper Ability, mlogit) (lnWage <- c.exper##c.exper Ability), latent(Ability) var(Ability@1) nocapslatent difficult from(temp,skip)
+matrix fac1 = e(b)
 
 * joint estimation with 2 factors (different DGP, so different dependent variables)
-gsem (1.work2 <- meduc c.exper##c.exper Factor1[id] Factor2[id], mlogit) (lnWage2 <- c.exper##c.exper Factor2[id]), var(Factor1[id]@1 Factor2[id]@1) cov(Factor1[id]*Factor2[id]@0) 
+gsem (Ability -> asvab1-asvab6) (1.work2 <- meduc c.exper##c.exper Ability Noncog[id], mlogit) (lnWage2 <- c.exper##c.exper Ability Noncog[id]), var(Ability@1 Noncog[id]@1) cov(Ability*Noncog[id]@0) latent(Ability Noncog) nocapslatent difficult dnumerical nonrtolerance from(fac1,skip)
 
 log close
 
